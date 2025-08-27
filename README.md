@@ -66,35 +66,39 @@ TimeBank/
   mysql -u root -p
   CREATE DATABASE timebank;
 
-2. Configure backend
+### 2. Configure backend
 
-Inside backend/.env:
+- Inside backend/.env:
+ ```bash
+  DATABASE_URL="mysql://root:yourpassword@localhost:3306/timebank"
+  JWT_SECRET="yoursecretkey"
+  PORT=4000
+```
 
-DATABASE_URL="mysql://root:yourpassword@localhost:3306/timebank"
-JWT_SECRET="yoursecretkey"
-PORT=4000
-
-3. Run backend
+### 3. Run backend
+``` bash
 cd backend
 npm install
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
+```
 
 4. Run frontend
 
-Inside frontend/.env:
-
+- Inside frontend/.env:
+``` bash
 VITE_API_URL="http://localhost:4000/api"
+```
 
-
-Start dev server:
-
+- Start dev server:
+``` bash
 cd frontend
 npm install
 npm run dev
+```
 
-🔮 Next Steps
+### 🔮 Next Steps
 
 📧 Email notifications on booking/accept
 
