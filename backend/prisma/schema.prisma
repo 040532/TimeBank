@@ -1,0 +1,72 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String        @unique
+  password    String
+  bio         String?
+  balance     Float         @default(0)
+  offers      Offer[]
+  requests    Request[]     @relation("Requester")
+  createdAt   DateTime      @default(now())
+  transactionsFrom Transaction[] @relation("fromUser")
+  transactionsTo   Transaction[] @relation("toUser")
+  reviews     Review[]
+}
+
+model Offer {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String
+  durationMinutes Int
+  creditsRate     Float
+  owner           User     @relation(fields: [ownerId], references: [id])
+  ownerId         Int
+  requests        Request[]
+  transactions    Transaction[] // <-- Added opposite relation
+  createdAt       DateTime @default(now())
+}
+
+model Request {
+  id          Int      @id @default(autoincrement())
+  offer       Offer    @relation(fields: [offerId], references: [id])
+  offerId     Int
+  requester   User     @relation("Requester", fields: [requesterId], references: [id])
+  requesterId Int
+  transactions Transaction[] // <-- Added opposite relation
+  scheduledAt DateTime?
+  status      String   @default("pending") // pending | accepted | completed | cancelled
+  createdAt   DateTime @default(now())
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  from      User?    @relation("fromUser", fields: [fromId], references: [id])
+  fromId    Int?
+  to        User?    @relation("toUser", fields: [toId], references: [id])
+  toId      Int?
+  credits   Float
+  offer     Offer?   @relation(fields: [offerId], references: [id])
+  offerId   Int?
+  request   Request? @relation(fields: [requestId], references: [id])
+  requestId Int?
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  reviewer   User     @relation(fields: [reviewerId], references: [id])
+  reviewerId Int
+  revieweeId Int
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+}
